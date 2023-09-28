@@ -1,0 +1,149 @@
+{
+    "name": "sr-mask-arepo-48px-264px-128p-2000T", // experiments name
+    "gpu_ids": [0], // gpu ids list, default is single 0
+    "seed" : -1, // random seed, seed <0 represents randomization not used
+    "finetune_norm": false, // find the parameters to optimize
+
+    "path": { //set every part file path
+        "base_dir": "experiments", // base path for all log except resume_state
+        "code": "code", // code backup
+        "tb_logger": "tb_logger", // path of tensorboard logger
+        "results": "results",
+        "checkpoint": "checkpoint",
+        "resume_state": "olvi-results/264px_128p_2000T/checkpoint/380"
+        // "resume_state": null // ex: 100, loading .state  and .pth from given epoch and iteration
+    },
+
+    "datasets": { // train or test
+        "train": {
+            "which_dataset": {  // import designated dataset using arguments
+                "name": ["data.dataset", "SuperresolutionTilingDataset"], // import Dataset() class / function(not recommend) from data.dataset.py (default is [data.dataset.py])
+                "args":{ // arguments to initialize dataset
+                    "data_root": "../matter_density_data_48px_264px_128plr/train_arepo_48px_128p",
+                    "data_flist": "../matter_density_data_48px_264px_128plr/train_arepo_48px_128p/flist.txt",
+                    "data_len": -1,
+                    "mask_config": {
+                        "mask_mode": "tiling"
+                    }
+                }
+            },
+            "dataloader":{
+                "validation_split": 16, // percent or number
+                "args":{ // arguments to initialize train_dataloader
+                    "batch_size": 8, // batch size in each gpu
+                    "num_workers": 8,
+                    "shuffle": true,
+                    "pin_memory": true,
+                    "drop_last": true
+                },
+                "val_args":{ // arguments to initialize valid_dataloader, will overwrite the parameters in train_dataloader
+                    "batch_size": 8, // batch size in each gpu
+                    "num_workers": 8,
+                    "shuffle": false,
+                    "pin_memory": true,
+                    "drop_last": false
+                }
+            }
+        },
+        "test": {
+            "which_dataset": {
+                "name": "SuperresolutionTilingDataset", // import Dataset() class / function(not recommend) from default file
+                "args":{
+                    "data_root": "../matter_density_data_48px_264px_128plr/tile_arepo_48px_128p",
+                    "data_flist": "../matter_density_data_48px_264px_128plr/tile_arepo_48px_128p/flist.txt",
+                    "mask_config": {
+                        "mask_mode": "tiling"
+                    }
+                }
+            },
+            "dataloader":{
+                "args":{
+                    "batch_size": 8,
+                    "num_workers": 8,
+                    "pin_memory": true
+                }
+            }
+        }
+    },
+
+    "model": { // networks/metrics/losses/optimizers/lr_schedulers is a list and model is a dict
+        "which_model": { // import designated  model(trainer) using arguments
+            "name": ["models.model", "Palette"], // import Model() class / function(not recommend) from models.model.py (default is [models.model.py])
+            "args": {
+                "sample_num": 8, // process of each image
+                "task": "superresolution-mask",
+                "ema_scheduler": {
+                    "ema_start": 1,
+                    "ema_iter": 1,
+                    "ema_decay": 0.9999
+                },
+                "optimizers": [
+                    { "lr": 1e-4, "weight_decay": 0}
+                ]
+            }
+        },
+        "which_networks": [ // import designated list of networks using arguments
+            {
+                "name": ["models.network", "Network"], // import Network() class / function(not recommend) from default file (default is [models/network.py])
+                "args": { // arguments to initialize network
+                    "init_type": "kaiming", // method can be [normal | xavier| xavier_uniform | kaiming | orthogonal], default is kaiming
+                    "module_name": "guided_diffusion", // sr3 | guided_diffusion
+                    "unet": {
+                        "in_channel": 2,
+                        "out_channel": 1,
+                        "inner_channel": 64,
+                        "channel_mults": [
+                            1,
+                            2,
+                            4
+                        ],
+                        "attn_res": [
+                            16
+                        ],
+                        "num_head_channels": 32,
+                        "res_blocks": 1,
+                        "dropout": 0.2,
+                        "image_size": 48
+                    },
+                    "beta_schedule": {
+                        "train": {
+                            "schedule": "linear",
+                            "n_timestep": 2000, //2000
+                            // "n_timestep": 5, // debug
+                            "linear_start": 1e-6,
+                            "linear_end": 0.01
+                        },
+                        "test": {
+                            "schedule": "linear",
+                            "n_timestep": 2000, //1000,
+                            "linear_start": 1e-6, //1e-4,
+                            "linear_end": 0.01 //0.09
+                        }
+                    }
+                }
+            }
+        ],
+        "which_losses": [ // import designated list of losses without arguments
+            "mse_loss" // import mse_loss() function/class from default file (default is [models/losses.py]), equivalent to { "name": "mse_loss", "args":{}}
+        ],
+        "which_metrics": [ // import designated list of metrics without arguments
+            "mse" // import mae() function/class from default file (default is [models/metrics.py]), equivalent to { "name": "mae", "args":{}}
+        ]
+    },
+
+    "train": { // arguments for basic training
+        "n_epoch": 1e8, // max epochs, not limited now
+        "n_iter": 1e8, // max interations
+        "val_epoch": 10, // valdation every specified number of epochs
+        "save_checkpoint_epoch": 10,
+        "log_iter": 1e4, // log every specified number of iterations
+        "tensorboard" : true // tensorboardX enable
+    },
+
+    "debug": { // arguments in debug mode, which will replace arguments in train
+        "val_epoch": 1,
+        "save_checkpoint_epoch": 1,
+        "log_iter": 10,
+        "debug_split": 50 // percent or number, change the size of dataloder to debug_split.
+    }
+}

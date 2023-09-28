@@ -1,5 +1,5 @@
 # 3D-Diffusion for Super-resolution Emulation in Cosmology
-Anonymous 3D diffusion for cosmology
+Anonymous
 
 Our code is built off of https://github.com/Janspiry/Palette-Image-to-Image-Diffusion-Models.
 

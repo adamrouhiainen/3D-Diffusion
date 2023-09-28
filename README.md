@@ -5,7 +5,7 @@ Our code is built off of https://github.com/Janspiry/Palette-Image-to-Image-Diff
 
 To train the model on (say) GPUs 0 and 1:
 
-python run.py -c 'config/my_config_file.json' --gpu '0,1'
+python run.py -c 'config/sr-mask-arepo-48px-264px-128p-2000T.json' --gpu '0,1'
 
 For iterative outpainting, "python run.py" is called many times over, each time with a new .json file shifting which data is run on. To automate this, first generate a batch file with
 

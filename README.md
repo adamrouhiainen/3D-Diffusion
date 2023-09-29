@@ -16,4 +16,4 @@ Then, run
 
 sh run_big.bat
 
-The data that the outpainting .json file looks for finds must already be properly generated in the outpanting invervals that you want (we use 24px intervals on 48px cubes).
+For iterative outpainting, the data that the .json file finds must already be properly generated in the outpanting invervals that you want (we use 24px intervals on 48px cubes).

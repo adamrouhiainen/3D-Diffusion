@@ -1,6 +1,8 @@
 # Anonymous 3D-Diffusion for Super-resolution Emulation in Cosmology
 
-Our code is built off of https://github.com/Janspiry/Palette-Image-to-Image-Diffusion-Models, and uses PyTorch.
+Our code is built off of https://github.com/Janspiry/Palette-Image-to-Image-Diffusion-Models.
+
+Requirements: torch>=1.6, numpy, scipy, tqdm
 
 To train the model on (say) GPUs 0 and 1:
 

@@ -1,5 +1,7 @@
 # [3D-Diffusion for Super-resolution Emulation in Cosmology](https://arxiv.org/pdf/2311.05217.pdf)
 
+![Denoising diffusion for 3D fields](https://github.com/adamrouhiainen/3D-Diffusion/blob/main/diffusion_example.png)
+
 Our code is built off of https://github.com/Janspiry/Palette-Image-to-Image-Diffusion-Models.
 
 Requirements:  `torch>=1.6`, `numpy`, `scipy`, `tqdm`

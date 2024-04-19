@@ -16,4 +16,4 @@ Then, run
 
 `sh run_big.bat`
 
-For iterative outpainting, the data that the .json file finds must already be properly generated in the outpanting invervals that you want (we use 24px intervals on 48px cubes). There are scripts to do preprocess the data in matter_density_data/.
+For iterative outpainting, the data that the .json file finds must already be properly generated in the outpanting invervals that you want (we use 24px intervals on 48px cubes). There are scripts to preprocess the data in `matter_density_data/`.
